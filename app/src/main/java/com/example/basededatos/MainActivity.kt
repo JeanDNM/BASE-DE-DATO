@@ -20,15 +20,25 @@
         private lateinit var consultaporProvinciaButton: Button
         private lateinit var consultar: TextView
         private lateinit var db: DatabaseHandler
-
-
+        private lateinit var provinciaSpinner: Spinner
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
-
             setContentView(R.layout.activity_main)
 
+            initializeViews()
+            initializeDatabase()
 
+            guardarcontacto.setOnClickListener { saveContact() }
+            consultaboton.setOnClickListener { consultAllContacts() }
+            consultaporProvinciaButton.setOnClickListener { consultByProvincia() }
+            configureProvinciaSpinner()
+
+            val consultaButton: Button = findViewById(R.id.ConsutaSpinner)
+            consultaButton.setOnClickListener { consultByProvinciaSpinner() }
+        }
+
+        private fun initializeViews() {
             nameEditText = findViewById(R.id.NameEditText)
             emailEditText = findViewById(R.id.EmailEditText)
             provinciaEditText = findViewById(R.id.ProvinciaEditText)
@@ -37,75 +47,64 @@
             consultaDato = findViewById(R.id.ProvinciaConsultaEditText)
             consultaporProvinciaButton = findViewById(R.id.ConsultaPorProvinciaButton)
             consultar = findViewById(R.id.consulta)
+            provinciaSpinner = findViewById(R.id.ProvinciaSpinner)
+        }
 
+        private fun initializeDatabase() {
             db = DatabaseHandler(this)
+        }
 
+        private fun saveContact() {
+            val name = nameEditText.text.toString().trim()
+            val email = emailEditText.text.toString().trim()
+            val provincia = provinciaEditText.text.toString().trim()
 
-            guardarcontacto.setOnClickListener {
-                val name = nameEditText.text.toString().trim()
-                val email = emailEditText.text.toString().trim()
-                val provincia = provinciaEditText.text.toString().trim()
-
-                if (name.isNotEmpty() && email.isNotEmpty() && provincia.isNotEmpty()) {
-                    val id = db.addContact(name, email, provincia)
-                    if (id == (-1L)) {
-                        // error al guardar en BBD
-                    } else {
-                        nameEditText.text.clear()
-                        emailEditText.text.clear()
-                        provinciaEditText.text.clear()
-                    }
+            if (name.isNotEmpty() && email.isNotEmpty() && provincia.isNotEmpty()) {
+                val id = db.addContact(name, email, provincia)
+                if (id == (-1L)) {
+                    // error al guardar en BBD
                 } else {
-                    Toast.makeText(applicationContext, "Te falta algún campo por rellenar", Toast.LENGTH_LONG).show()
+                    nameEditText.text.clear()
+                    emailEditText.text.clear()
+                    provinciaEditText.text.clear()
                 }
+            } else {
+                Toast.makeText(applicationContext, "Te falta algún campo por rellenar", Toast.LENGTH_LONG).show()
+            }
+        }
+
+        private fun consultAllContacts() {
+            val contactList = db.getAllContacts()
+            updateConsultaText(contactList)
+        }
+
+        private fun consultByProvincia() {
+            val provinciaConsulta = consultaDato.text.toString().trim()
+            val contactList = db.queryProvinciaContacts(provinciaConsulta)
+            updateConsultaText(contactList)
+        }
+
+        private fun updateConsultaText(contactList: List<Contact>) {
+            val consultaTexto = StringBuilder()
+
+            for (contact in contactList) {
+                Log.d("Contacto", "ID: ${contact.id}, Nombre: ${contact.name}, Email: ${contact.email}, Provincia: ${contact.provincia}")
+                consultaTexto.append("ID: ${contact.id}, Nombre: ${contact.name}, Email: ${contact.email}, Provincia: ${contact.provincia}\n")
             }
 
-            consultaboton.setOnClickListener {
-                val contactList = db.getAllContacts()
-                val consultaTexto = StringBuilder()
+            consultaDato.setText(consultaTexto.toString())
+        }
 
-                for (contact in contactList) {
-                    Log.d("Contacto", "ID: ${contact.id}, Nombre: ${contact.name}, Email: ${contact.email}, Provincia: ${contact.provincia}")
-                    consultaTexto.append("ID: ${contact.id}, Nombre: ${contact.name}, Email: ${contact.email}, Provincia: ${contact.provincia}\n")
-                }
-
-                consultaDato.setText(consultaTexto.toString())
-            }
-
-            consultaporProvinciaButton.setOnClickListener {
-                val provinciaConsulta = consultaDato.text.toString().trim()
-                val contactList = db.queryProvinciaContacts(provinciaConsulta)
-                val consultaTexto = StringBuilder()
-
-                for (contact in contactList) {
-                    Log.d("Contacto", "ID: ${contact.id}, Nombre: ${contact.name}, Email: ${contact.email}, Provincia: ${contact.provincia}")
-                    consultaTexto.append("ID: ${contact.id}, Nombre: ${contact.name}, Email: ${contact.email}, Provincia: ${contact.provincia}\n")
-                }
-
-                consultaDato.setText(consultaTexto.toString())
-            }
-
-            // Dentro de onCreate
-            val provinciaSpinner: Spinner = findViewById(R.id.ProvinciaSpinner)
-            val provincias = resources.getStringArray(R.array.provincias)
+        private fun configureProvinciaSpinner() {
+            val provincias = db.getDistinctProvinces()
             val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, provincias)
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             provinciaSpinner.adapter = adapter
+        }
 
-            val consultaButton: Button = findViewById(R.id.ConsutaSpinner)
-
-            consultaButton.setOnClickListener {
-                val provinciaConsulta = provinciaSpinner.selectedItem.toString()
-                val contactList = db.queryProvinciaContacts(provinciaConsulta)
-                val consultaTexto = StringBuilder()
-
-                for (contact in contactList) {
-                    Log.d("Contacto", "ID: ${contact.id}, Nombre: ${contact.name}, Email: ${contact.email}, Provincia: ${contact.provincia}")
-                    consultaTexto.append("ID: ${contact.id}, Nombre: ${contact.name}, Email: ${contact.email}, Provincia: ${contact.provincia}\n")
-                }
-
-                consultaDato.setText(consultaTexto.toString())
-            }
-
+        private fun consultByProvinciaSpinner() {
+            val provinciaConsulta = provinciaSpinner.selectedItem.toString()
+            val contactList = db.queryProvinciaContacts(provinciaConsulta)
+            updateConsultaText(contactList)
         }
     }
-

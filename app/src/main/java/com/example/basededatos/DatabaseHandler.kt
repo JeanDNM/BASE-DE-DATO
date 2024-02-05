@@ -98,4 +98,25 @@ class DatabaseHandler (context : Context) : SQLiteOpenHelper(context, DATABASE_N
         cursor.close()
         return contactList
     }
+
+    fun getDistinctProvinces(): List<String> {
+        val provinceList = mutableListOf<String>()
+        val selectDistinctQuery = "SELECT DISTINCT $KEY_PROVINCIA FROM $TABLE_NAME"
+        val db = this.readableDatabase
+        val cursor = db.rawQuery(selectDistinctQuery, null)
+
+        cursor.use {
+            if (it.moveToFirst()) {
+                do {
+                    val provincia = it.getString(it.getColumnIndex(KEY_PROVINCIA))
+                    if (!provincia.isNullOrBlank()) {
+                        provinceList.add(provincia)
+                    }
+                } while (it.moveToNext())
+            }
+        }
+
+        return provinceList
+    }
+
 }
