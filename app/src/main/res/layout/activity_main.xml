@@ -27,8 +27,15 @@
             android:hint="Email:"
             android:inputType="text" />
 
+        <EditText
+            android:id="@+id/ProvinciaEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Provincia" />
+
         <Button
-            android:id="@+id/guardarcontacto"
+            android:id="@+id/GuardarContacto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Guardar Contacto" />
@@ -38,6 +45,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Consulta  de la base de datos" />
+
+        <EditText
+            android:id="@+id/ProvinciaConsultaEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Provincia de Consulta" />
+
+        <Button
+            android:id="@+id/ConsultaPorProvinciaButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Consultar por Provincia" />
 
         <ScrollView
             android:layout_width="match_parent"
