@@ -74,6 +74,21 @@
 
         </ScrollView>
 
+        <Spinner
+            android:id="@+id/ProvinciaSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:entries="@array/provincias" />
+
+        <Button
+            android:id="@+id/ConsutaSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Elegir Provincia" />
+
+
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

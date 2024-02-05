@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="provincias">
+        <item>Valencia</item>
+        <item>Barcelona</item>
+        <item>Madrid</item>
+        <item>Tenerife</item>
+    </string-array>
+</resources>

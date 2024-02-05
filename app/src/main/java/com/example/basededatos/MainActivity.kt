@@ -3,8 +3,10 @@
     import androidx.appcompat.app.AppCompatActivity
     import android.os.Bundle
     import android.util.Log
+    import android.widget.ArrayAdapter
     import android.widget.Button
     import android.widget.EditText
+    import android.widget.Spinner
     import android.widget.TextView
     import android.widget.Toast
 
@@ -82,6 +84,28 @@
 
                 consultaDato.setText(consultaTexto.toString())
             }
+
+            // Dentro de onCreate
+            val provinciaSpinner: Spinner = findViewById(R.id.ProvinciaSpinner)
+            val provincias = resources.getStringArray(R.array.provincias)
+            val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, provincias)
+            provinciaSpinner.adapter = adapter
+
+            val consultaButton: Button = findViewById(R.id.ConsutaSpinner)
+
+            consultaButton.setOnClickListener {
+                val provinciaConsulta = provinciaSpinner.selectedItem.toString()
+                val contactList = db.queryProvinciaContacts(provinciaConsulta)
+                val consultaTexto = StringBuilder()
+
+                for (contact in contactList) {
+                    Log.d("Contacto", "ID: ${contact.id}, Nombre: ${contact.name}, Email: ${contact.email}, Provincia: ${contact.provincia}")
+                    consultaTexto.append("ID: ${contact.id}, Nombre: ${contact.name}, Email: ${contact.email}, Provincia: ${contact.provincia}\n")
+                }
+
+                consultaDato.setText(consultaTexto.toString())
+            }
+
         }
     }
 
